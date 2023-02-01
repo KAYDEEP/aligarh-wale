@@ -1,3 +1,3 @@
-const dev = process.env.NODE_ENV !== 'production';
+const server = process.env.API_URL;
 
-export const server = dev ? 'http://localhost:3000/' : 'https://aligarh-wale.vercel.app/';
+export  {server};
