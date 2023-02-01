@@ -7,41 +7,34 @@ import BlogCard from '../../elements/blogCard'
 import { Category } from '../../components/category'
 import axios from 'axios';
 import Shimmer from '../../elements/shimmer'
+import { config } from '../../config/config'
+import { server } from '../../helper/server'
 
-
-export default function Health(props) {
-	const { pathname } = useRouter()
-	const catData = category.find(item => item.slug === pathname)
-	const { name } = catData;
-	const [blogs, setBlogs] = useState([])
-	const [loading, setLoading] = useState(true)
-	console.log("🚀 ~ file: news-update.js:17 ~ NewsAndUpdate ~ loading", loading)
-
-	useEffect(() => {
-		if (blogs.length < 1) {
-			getBlogs()
-		}
-	}, [blogs])
-
-	const getBlogs = () => {
-		const config = {
-			method: 'get',
-			url: `http://localhost:3000/api/post/category?name=${name}`,
-		}
-
-		axios(config).then((res) => {
-			if (res) {
-				setLoading(false)
-				setBlogs(res.data.data)
-				// setBanner({key:"success", text:"Post created successfully."})
-			}
-		}).catch((err) => {
-			console.log('error', err);
-		})
+export async function getServerSideProps({ query }) {
+	const { category } = query;
+	const obj = {
+		method: 'get',
+		url: `${server}api/post/category/${category}`,
 	}
 
-	if(loading) {
-	return 	<Shimmer />
+	const { status, data } = await axios(obj);
+	console.log("🚀 ~ file: [category].js:25 ~ getServerSideProps ~ status", status)
+	if (status === 200) {
+		return {
+			props: { data }
+		}
+	}
+}
+
+
+export default function DrinkAndFood({ data }) {
+	const {asPath} = useRouter()
+	const catData = category.find(item => item.slug === asPath)
+	const blogs = data.data;
+	console.log("🚀 ~ file: [category].js:51 ~ DrinkAndFood ~ blogs", blogs)
+
+	if (!blogs) {
+		return <Shimmer />
 	}
 
 	return (
@@ -51,8 +44,8 @@ export default function Health(props) {
 				<div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
 					{blogs.length && blogs.map((item) => (
 						<BlogCard {...item} />
-					)) || 
-					<p>No data found</p>
+					)) ||
+						<p>No data found</p>
 					}
 				</div>
 			</div>
@@ -61,5 +54,3 @@ export default function Health(props) {
 
 	)
 }
-
-

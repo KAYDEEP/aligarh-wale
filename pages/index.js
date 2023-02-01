@@ -1,6 +1,3 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from '@next/font/google'
 
 import Layout from '../components/layout'
 import Blog from '../components/blogs'
@@ -13,70 +10,39 @@ import axios from 'axios';
 import { useEffect, useState } from "react";
 import ExtraBlogs from '../components/extraBlogs'
 import { category } from '../helper/constant'
+import { config } from '../config/config'
+import Shimmer from '../elements/shimmer'
 
-const bannerData = [{
-  id:1,
-  title: "Eduction",
-  desc: "Ome shuigdi djhuigd dkhkui",
-  img: "",
-  btnText: "start",
-  colorCls: 'bg-slate-600'
-},
-{
-  id:2,
-  title: "Health",
-  desc: "Ome shuigdi djhuigd dkhkui",
-  img: "",
-  btnText: "start",
-  colorCls: 'bg-green-600'
-},
-{
-  id:3,
-  title: "Drink and Food",
-  desc: "Ome shuigdi djhuigd dkhkui",
-  img: "",
-  btnText: "start",
-  colorCls: 'bg-red-600'
-},
-{
-  id:4,
-  title: "Shopping",
-  desc: "Ome shuigdi djhuigd dkhkui",
-  img: "",
-  btnText: "start",
-  colorCls: 'bg-yellow-600'
-},
-]
 
-export default function Home() {
+import { server } from '../helper/server'
 
-  const [blogs, setBlogs] = useState([])
-  console.log("🚀 ~ file: blogs.js:13 ~ Blog ~ blogs", blogs)
+export async function getServerSideProps({ query }) {
+	const { category } = query;
+	const obj = {
+		method: 'get',
+		url: `${server}api/post`,
+	}
 
-  useEffect(() => {
-    if (blogs.length < 1) {
-      getBlogs()
+	const { status, data } = await axios(obj);
+	console.log("🚀 ~ file: [category].js:25 ~ getServerSideProps ~ status", status)
+	if (status === 200) {
+		return {
+			props: { data }
+		}
+	}
+}
+
+
+
+export default function Home({data}) {
+console.log("🚀 ~ file: index.js:38 ~ Home ~ data", data)
+
+const blogs = data.data;
+
+
+	if(!blogs.length>0) {
+    return 	<Shimmer />
     }
-  }, [blogs])
-
-  const getBlogs = () => {
-    const config = {
-      method: 'get',
-      url: 'http://localhost:3000/api/post/all',
-    }
-
-    axios(config).then((res) => {
-      console.log('res----', res);
-
-      if (res) {
-        setBlogs(res.data.data)
-        // setBanner({key:"success", text:"Post created successfully."})
-      }
-    }).catch((err) => {
-      console.log('error', err);
-    })
-
-  }
   return (
     <>
   <Layout>

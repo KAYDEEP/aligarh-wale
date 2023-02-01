@@ -122,7 +122,7 @@ export default function CreatePost() {
     console.log("🚀 ~ file: create.js:111 ~ handleButton ~ form", form)
     const config = {
       method: 'post',
-      url: 'http://localhost:3000/api/post/create',
+      url: 'api/post/create',
       data: form
     }
 
