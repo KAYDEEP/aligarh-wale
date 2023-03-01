@@ -23,8 +23,7 @@ export async function getServerSideProps({ query }) {
 		url: `${server}api/post`,
 	}
 
-	const { status, data } = await axios(obj);
-	console.log("🚀 ~ file: [category].js:25 ~ getServerSideProps ~ status", status)
+	const { status, data, error } = await axios(obj);
 	if (status === 200) {
 		return {
 			props: { data }
@@ -34,26 +33,25 @@ export async function getServerSideProps({ query }) {
 
 
 
-export default function Home({data}) {
-console.log("🚀 ~ file: index.js:38 ~ Home ~ data", data)
+export default function Home({ data }) {
 
-const blogs = data.data;
+	const blogs = data.data;
 
 
-	if(!blogs.length>0) {
-    return 	<Shimmer />
-    }
-  return (
-    <>
-  <Layout>
-    <Hero />
-    <Category />
-  <Slider name="banner" list={category} heading="Trending posts" subHeading="Discover the most outstanding articles in all topics of life...."/>
-{blogs.length && <Blog blogs={blogs}/>}
-    {/* <Banner /> */}
-<ExtraBlogs blogs={blogs}/>
-<LatestBlog blogs={blogs}/>
-  </Layout>
-    </>
-  )
+	if (!blogs.length > 0) {
+		return <Shimmer />
+	}
+	return (
+		<>
+			<Layout>
+				<Hero />
+				<Category />
+				<Slider name="banner" list={category} heading="Trending posts" subHeading="Discover the most outstanding articles in all topics of life...." />
+				{blogs.length && <Blog blogs={blogs} />}
+				{/* <Banner /> */}
+				<ExtraBlogs blogs={blogs} />
+				<LatestBlog blogs={blogs} />
+			</Layout>
+		</>
+	)
 }
